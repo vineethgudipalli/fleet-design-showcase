@@ -120,7 +120,22 @@ export async function initiateFigmaAuth() {
     const FIGMA_CLIENT_ID = import.meta.env.VITE_FIGMA_CLIENT_ID;
     const FIGMA_REDIRECT_URI = import.meta.env.VITE_FIGMA_REDIRECT_URI;
 
+    console.log("🔐 Figma OAuth Debug:", {
+        hasClientId: !!FIGMA_CLIENT_ID,
+        hasRedirectUri: !!FIGMA_REDIRECT_URI,
+        redirectUri: FIGMA_REDIRECT_URI,
+        currentUrl: window.location.href
+    });
+
     if (!FIGMA_CLIENT_ID) {
+        console.error("❌ Figma Client ID is not configured. Check your environment variables.");
+        alert("Figma authentication is not configured. Please contact the administrator.");
+        return;
+    }
+
+    if (!FIGMA_REDIRECT_URI) {
+        console.error("❌ Figma Redirect URI is not configured. Check your environment variables.");
+        alert("Figma redirect URI is not configured. Please contact the administrator.");
         return;
     }
 
@@ -144,5 +159,6 @@ export async function initiateFigmaAuth() {
 
     const authUrl = `https://www.figma.com/oauth?${params.toString()}`;
 
+    console.log("🚀 Redirecting to Figma OAuth:", authUrl);
     window.location.href = authUrl;
 }
