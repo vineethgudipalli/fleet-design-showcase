@@ -1,0 +1,67 @@
+# GitLab CI/CD Configuration for Fleet Design Showcase
+# This pipeline automatically builds and deploys the app to GitLab Pages
+
+image: node:20
+
+# Cache node_modules for faster builds
+cache:
+  key:
+    files:
+      - package-lock.json
+  paths:
+    - node_modules/
+
+# Pages job - deploys to GitLab Pages on main/master branch
+pages:
+  stage: deploy
+  script:
+    # Install dependencies (uses cache when available)
+    - npm ci --prefer-offline
+
+    # Create .env file from GitLab CI/CD variables
+    # These variables must be set in: Settings → CI/CD → Variables
+    - echo "VITE_FIGMA_CLIENT_ID=$VITE_FIGMA_CLIENT_ID" > .env
+    - echo "VITE_FIGMA_CLIENT_SECRET=$VITE_FIGMA_CLIENT_SECRET" >> .env
+    - echo "VITE_FIGMA_REDIRECT_URI=$VITE_FIGMA_REDIRECT_URI" >> .env
+
+    # Build the application with Vite
+    - npm run build
+
+    # GitLab Pages requires output in 'public' directory
+    # Vite builds to 'build' directory, so we move it
+    - mv build public
+
+    # Display build info for debugging
+    - echo "✅ Build completed successfully"
+    - echo "📦 Build output:"
+    - ls -lah public/
+    - echo "📊 Build size:"
+    - du -sh public/
+
+  # Artifacts are the files GitLab Pages will serve
+  artifacts:
+    paths:
+      - public
+    expire_in: 1 day
+
+  # Only deploy on the default branch (main or master)
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# Optional: Build job for testing on feature branches
+# This runs on all branches except main/master to verify builds work
+build-test:
+  stage: build
+  script:
+    - npm ci
+    - echo "VITE_FIGMA_CLIENT_ID=test_client_id" > .env
+    - echo "VITE_FIGMA_CLIENT_SECRET=test_secret" >> .env
+    - echo "VITE_FIGMA_REDIRECT_URI=http://localhost:3000/auth/figma/callback" >> .env
+    - npm run build
+    - echo "✅ Test build completed successfully"
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+  artifacts:
+    paths:
+      - build
+    expire_in: 1 day
