@@ -4,7 +4,9 @@
   import path from 'path';
 
   export default defineConfig({
-    base: '/',
+    // Use absolute path (/) for GitLab Pages custom domain
+    // Use relative path for GitHub Pages
+    base: process.env.VITE_DEPLOY_TARGET === 'gitlab' ? '/' : '/fleet-design-showcase/',
     plugins: [react()],
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],

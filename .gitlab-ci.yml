@@ -22,7 +22,8 @@ pages:
 
     # Create .env file from GitLab CI/CD variables
     # These variables must be set in: Settings → CI/CD → Variables
-    - echo "VITE_FIGMA_CLIENT_ID=$VITE_FIGMA_CLIENT_ID" > .env
+    - echo "VITE_DEPLOY_TARGET=gitlab" > .env
+    - echo "VITE_FIGMA_CLIENT_ID=$VITE_FIGMA_CLIENT_ID" >> .env
     - echo "VITE_FIGMA_CLIENT_SECRET=$VITE_FIGMA_CLIENT_SECRET" >> .env
     - echo "VITE_FIGMA_REDIRECT_URI=$VITE_FIGMA_REDIRECT_URI" >> .env
 
@@ -69,3 +70,7 @@ build-test:
     paths:
       - build
     expire_in: 1 day
+
+# GitHub Pages deployment (via mirroring)
+# This will be picked up by GitHub Actions
+# Note: Actual deployment happens in .github/workflows/deploy.yml on GitHub
