@@ -82,6 +82,13 @@ function AppContent() {
             figmaApi.setToken(token);
         }
         login(userInfo);
+
+        // Redirect to base path after successful authentication
+        // This handles both GitLab Pages (/) and GitHub Pages (/fleet-design-showcase/)
+        const basePath = import.meta.env.BASE_URL || '/';
+        if (window.location.pathname !== basePath) {
+            window.location.href = basePath;
+        }
     };
 
     const handleAuthError = (error: string) => {
