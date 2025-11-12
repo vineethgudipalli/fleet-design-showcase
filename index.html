@@ -5,6 +5,17 @@
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>Fleet Design Showcase</title>
+      <script>
+        // GitHub Pages SPA redirect restoration
+        // When 404.html redirects here, restore the original URL
+        (function() {
+          var redirect = sessionStorage.redirect;
+          delete sessionStorage.redirect;
+          if (redirect && redirect !== location.href) {
+            history.replaceState(null, null, redirect.replace(location.origin, ''));
+          }
+        })();
+      </script>
     </head>
 
     <body>
