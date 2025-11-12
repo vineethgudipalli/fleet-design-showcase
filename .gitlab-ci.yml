@@ -14,6 +14,8 @@ cache:
 # Pages job - deploys to GitLab Pages on main/master branch
 pages:
   stage: deploy
+  tags:
+    - prod-gke-runner
   script:
     # Install dependencies (uses cache when available)
     - npm ci --prefer-offline
@@ -52,6 +54,8 @@ pages:
 # This runs on all branches except main/master to verify builds work
 build-test:
   stage: build
+  tags:
+    - prod-gke-runner
   script:
     - npm ci
     - echo "VITE_FIGMA_CLIENT_ID=test_client_id" > .env
